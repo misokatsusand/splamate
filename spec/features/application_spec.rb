@@ -31,7 +31,7 @@ RSpec.describe "Application_view", type: :feature do
         visit '/auth/:provider/callback'
       end
 
-      it 'ログインユーザーのアイコンが表示されること' do
+      it 'ログインユーザのアイコンが表示されること' do
         expect(page).to have_selector "img[src$='/test_image.jpg']"
       end
 
@@ -45,7 +45,7 @@ RSpec.describe "Application_view", type: :feature do
         visit root_path
       end
 
-      it 'ログインユーザーのアイコンが表示されないこと' do
+      it 'ログインユーザのアイコンが表示されないこと' do
         expect(page).not_to have_selector "img[src$='/test_image.jpg']"
       end
 
