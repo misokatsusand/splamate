@@ -58,4 +58,20 @@ RSpec.describe UsersController, type: :request do
       end
     end
   end
+
+  describe '#show' do
+    let(:user) { create(:user) }
+
+    before do
+      get user_path(user)
+    end
+
+    it 'リクエストが成功すること' do
+      expect(response.status).to eq 200
+    end
+
+    it 'パラメータ通りのユーザを取得すること' do
+      expect(controller.instance_variable_get('@user')).to eq User.find(user.id)
+    end
+  end
 end

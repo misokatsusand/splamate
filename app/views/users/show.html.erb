@@ -1,0 +1,29 @@
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "ホーム", root_path %></li>
+    <li class="breadcrumb-item active" aria-current="page">プロフィール</li>
+  </ol>
+</nav>
+<div class="container">
+  <div class="twitter_info">
+    <div class="twitter_icon">
+      <img class="rounded-circle mb-4" src="<%= @user.image %>">
+    </div>
+    <div class="twitter_name">
+      <h2><%= @user.name %></h1>
+      <p>@<%= @user.nickname %></p>
+    </div>
+  </div>
+  <table class="table">
+    <tbody>
+      <tr><th class="table_row1 col-3 ">フレンドコード</th><td class="col-9"><%= @user.friend_code %></td></tr>
+      <tr><th class="table_row1">最高Xパワー</th><td><%= @user.power %></td></tr>
+      <tr><th class="table_row1 text-center" colspan="2">プロフィール</td></tr>
+      <tr><td colspan="2"><%= @user.profile %></td></tr>
+    </tbody>
+  </table>
+  <% if @user.id == @current_user.id %>
+    <%= link_to "編集する", "/users/#{@current_user.id}/edit", class: "btn btn-primary w-100" %>
+    <%= link_to "ログアウト", "/log_out", method: :post, class: "btn btn-secondary w-100" %>
+  <% end %>
+</div>
