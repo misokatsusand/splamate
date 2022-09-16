@@ -59,6 +59,32 @@ RSpec.describe UsersController, type: :request do
     end
   end
 
+  describe '#log_out' do
+    context 'ログイン済のとき' do
+      before do
+        Rails.application.env_config['omniauth.auth'] = twitter_mock
+        get '/auth/:provider/callback'
+        post '/log_out'
+      end
+
+      it 'トップページへリダイレクトすること' do
+        expect(response).to redirect_to root_path
+      end
+
+      it 'ログアウトすること' do
+        get root_path
+        expect(controller.instance_variable_get('@current_user').id).to be_nil
+      end
+    end
+
+    context '未ログインのとき' do
+      it 'トップページへリダイレクトすること' do
+        post '/log_out'
+        expect(response).to redirect_to root_path
+      end
+    end
+  end
+
   describe '#show' do
     let(:user) { create(:user) }
 

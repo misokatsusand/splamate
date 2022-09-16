@@ -48,6 +48,27 @@ RSpec.describe "Users_view", type: :feature do
     end
   end
 
+  describe '#log_out' do
+    context 'ログイン済のとき' do
+      it '"ログアウトしました"と表示されること' do
+        Rails.application.env_config['omniauth.auth'] = twitter_mock
+        visit root_path
+        click_on 'ログイン'
+        visit user_path(User.find_by(uid: twitter_mock.uid).id)
+        click_on 'ログアウト'
+        expect(page).to have_content "ログアウトしました"
+      end
+    end
+
+    context '未ログインのとき' do
+      it '"ログインが必要です"と表示されること' do
+        page.driver.post '/log_out'
+        visit root_path
+        expect(page).to have_content "ログインが必要です"
+      end
+    end
+  end
+
   describe '#show' do
     let(:user) { create(:user) }
 

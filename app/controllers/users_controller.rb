@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  before_action :authenticate_user,{only: [:log_out]}
 
   def log_in
     if user = User.create_or_update_from_auth(request.env['omniauth.auth'])
@@ -14,6 +15,13 @@ class UsersController < ApplicationController
       flash[:danger] = '予期せぬエラーが発生しました'
       redirect_to root_path
     end
+  end
+
+  def log_out
+    session.delete(:uid)
+    @current_user = nil
+    flash[:success] = 'ログアウトしました'
+    redirect_to root_path
   end
 
   def failure

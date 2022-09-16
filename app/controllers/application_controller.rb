@@ -8,4 +8,11 @@ class ApplicationController < ActionController::Base
       @current_user = User.new
     end
   end
+
+  def authenticate_user
+    if @current_user.id.nil?
+      flash[:danger] = "ログインが必要です"
+      redirect_to root_path
+    end
+  end
 end
