@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
-  post '/auth/:provider/callback', to: 'users#twitter_auth'
-  get '/auth/failure',             to: 'users#failure'
+  root 'home#index'
+  get '/auth/:provider/callback', to: 'users#log_in'
+  get '/auth/failure',            to: 'users#failure'
 end
