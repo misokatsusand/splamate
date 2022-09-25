@@ -1,0 +1,32 @@
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "ホーム", root_path %></li>
+    <li class="breadcrumb-item"><%= link_to "プロフィール", user_path(params[:id]) %></li></li>
+    <li class="breadcrumb-item active" aria-current="page">プロフィール編集</li>
+  </ol>
+</nav>
+<div class="container">
+  <%= render "shared/error", obj: @user %>
+  <h1>プロフィール編集</h1>
+  <div class="twitter_info">
+    <div class="twitter_icon">
+      <img class="rounded-circle mb-4" src="<%= @user.image %>">
+    </div>
+    <div class="twitter_name">
+      <h2><%= @user.name %></h1>
+      <p>@<%= @user.nickname %></p>
+    </div>
+  </div>
+  <%= form_for @user do |f| %>
+    <%= f.label :friend_code ,"フレンドコード" %>
+    <%= f.text_field :friend_code, class: "form-control", value: @user.friend_code, placeholder: "フレンドコードを入力", required: true %>
+    <%= f.label :power ,"Xパワー" %>
+    <%= f.text_field :power, class: "form-control", value: @user.power, placeholder: "最高Xパワーを入力", required: true %>
+    <%= f.label :profile ,"自己紹介" %>
+    <%= f.text_area :profile, class: "form-control", value: @user.profile, placeholder: "自己紹介を入力" %>
+    <%= f.submit "#{@user.friend_code ? "更新" : "登録"}", class: "btn btn-primary w-100" %>
+  <% end %>
+  <% if @user.friend_code %>
+    <%= link_to "戻る", user_path(params[:id]), class: "btn btn-secondary w-100" %>
+  <% end %>
+</div>
