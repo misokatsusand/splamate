@@ -43,6 +43,24 @@ RSpec.describe User, type: :model do
       user.valid?
       expect(user.errors[:image]).to include("can't be blank")
     end
+
+    it 'friend_codeが14文字以上の時、無効であること' do
+      user = build(:user, friend_code: "1234-1234-1234-")
+      user.valid?
+      expect(user.errors[:friend_code]).to include("is too long (maximum is 14 characters)")
+    end
+
+    it 'powerが999以下の時、無効であること' do
+      user = build(:user, power: 999)
+      user.valid?
+      expect(user.errors[:power]).to include("must be greater than or equal to 1000")
+    end
+
+    it 'powerが400以上の時、無効であること' do
+      user = build(:user, power: 4001)
+      user.valid?
+      expect(user.errors[:power]).to include("must be less than or equal to 4000")
+    end
   end
 
   describe 'self.create_or_update_from_auth(auth)について' do
