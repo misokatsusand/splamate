@@ -6,6 +6,88 @@ RSpec.describe "Users_view", type: :feature do
     OmniAuth.config.mock_auth[:twitter] = nil
   end
 
+  describe '#index' do
+    context 'マスターユーザでログイン中のとき' do
+      let!(:user) { create(:user) }
+
+      before do
+        Rails.application.env_config['omniauth.auth'] = twitter_master_mock
+        visit root_path
+        click_on 'ログイン'
+        visit users_path
+      end
+
+      it 'ユーザアイコンが表示されること' do
+        expect(find('tbody').all('tr')[0]).to have_selector "img[src$='#{user.image}']"
+      end
+
+      it 'uidが表示されること' do
+        expect(find('tbody').all('tr')[0]).to have_content user.uid
+      end
+
+      it '名前が表示されること' do
+        expect(find('tbody').all('tr')[0]).to have_content user.name
+      end
+
+      it '@idが表示されること' do
+        expect(find('tbody').all('tr')[0]).to have_content "@#{user.nickname}"
+      end
+
+      it '編集リンクが機能すること' do
+        find('tbody').all('tr')[1].all('td')[4].find('a').click
+        expect(page).to have_content "プロフィール編集"
+      end
+
+      it '削除リンクが機能すること' do
+        expect{ find('tbody').all('tr')[0].all('td')[5].find('a').click }.to change{ User.count }.by(-1)
+      end
+
+      it 'ユーザが最大20件表示されること' do
+        create_list(:user, 30)
+        visit users_path
+        expect(find('tbody').all('tr').count).to eq 20
+      end
+
+      describe '検索フォームについて' do
+        it 'nameだけ入力されたとき、nameのあいまい検索結果が表示されること' do
+          create(:user)
+          create(:user, name: 't-e-s-t')
+          fill_in 'name', with: 'test'
+          click_on '検索'
+          expect(find('tbody').all('tr').count).to eq 2
+        end
+
+        it 'idだけ入力されたとき、idの完全一致検索結果が表示されること' do
+          create(:user, id: 11)
+          fill_in 'id', with: '1'
+          click_on '検索'
+          expect(find('tbody').all('tr').count).to eq 1
+        end
+
+        it 'nameとidが入力されたとき、両方の結果が表示されること' do
+          create(:user, name: 't-e-s-t')
+          fill_in 'name', with: 'test'
+          fill_in 'id', with: '2'
+          click_on '検索'
+          expect(find('tbody').all('tr').count).to eq 2
+        end
+      end
+    end
+
+    context 'マスターユーザでログイン中でないとき' do
+      before do
+        Rails.application.env_config['omniauth.auth'] = twitter_mock
+        visit root_path
+        click_on 'ログイン'
+        visit users_path
+      end
+
+      it '”不正なリクエストです”と表示されること' do
+        expect(page).to have_content "不正なリクエストです"
+      end
+    end
+  end
+
   describe '#log_in' do
     context 'twitter認証をしたとき' do
       context 'フレンドコードが存在するとき' do

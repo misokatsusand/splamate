@@ -59,6 +59,57 @@ RSpec.describe UsersController, type: :request do
     end
   end
 
+  describe '#index' do
+    let!(:user) { create(:user) }
+
+    context 'マスターユーザでログイン中のとき' do
+      before do
+        Rails.application.env_config['omniauth.auth'] = twitter_master_mock
+        get '/auth/:provider/callback'
+        get users_path
+      end
+
+      it 'リクエストが成功すること' do
+        expect(response.status).to eq 200
+      end
+
+      context '最初のアクセスまたは入力無しで検索ボタンを押した時' do
+        it '全ユーザを取得すること' do
+          controller_users = controller.instance_variable_get('@users').to_a
+          users = [
+            user,
+            User.find_by(uid: twitter_master_mock.uid)
+          ]
+          expect(controller_users).to eq users
+        end
+      end
+
+      context '検索ワードを入力し検索したとき' do
+        it '対象ユーザを取得すること' do
+          post '/users', params: { name: 'test', id: User.find_by(uid: twitter_master_mock.uid).id }
+          controller_users = controller.instance_variable_get('@users').to_a
+          users = [
+            user,
+            User.find_by(uid: twitter_master_mock.uid)
+          ]
+          expect(controller_users).to eq users
+        end
+      end
+    end
+
+    context 'マスターユーザ以外でログイン中のとき' do
+      before do
+        Rails.application.env_config['omniauth.auth'] = twitter_mock
+        get '/auth/:provider/callback'
+        get users_path
+      end
+
+      it 'トップページへリダイレクトすること' do
+        expect(response).to redirect_to root_path
+      end
+    end
+  end
+
   describe '#log_out' do
     context 'ログイン済のとき' do
       before do

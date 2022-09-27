@@ -1,6 +1,14 @@
 class UsersController < ApplicationController
   before_action :authenticate_user,{ only: [:log_out, :update] }
 
+  def index
+    unless @current_user.uid == Rails.application.credentials.dig(:user, :master_uid)
+      flash[:danger] = '不正なリクエストです'
+      redirect_to root_path
+    end
+    @users = User.search(params[:name], params[:id]).page(params[:page]).per(20)
+  end
+
   def log_in
     if user = User.create_or_update_from_auth(request.env['omniauth.auth'])
       session[:uid] = user.uid

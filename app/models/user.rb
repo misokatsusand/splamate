@@ -20,4 +20,15 @@ class User < ApplicationRecord
   rescue StandardError
     nil
   end
+
+  def self.search(search_name, search_id)
+    search_name.present? && name = "%#{search_name}%"
+    search_id.present? && id = search_id
+
+    if name.present? || id.present?
+      where('(name LIKE ?) or (id LIKE ?)', name, id)
+    else
+      all
+    end
+  end
 end

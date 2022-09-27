@@ -148,6 +148,17 @@ footer{
     margin: 0;
   }
 }
+/*--index--*/
+.user_index_container{
+  margin: 0 20px;
+  h3{
+    margin-top: 80px;
+  }
+}
+form .search_box{
+  width: 200px;
+  display: inline-block;
+}
 /*--show--*/
 .container .table{
   font-size: 1rem;

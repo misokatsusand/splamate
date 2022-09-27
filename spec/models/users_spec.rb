@@ -128,4 +128,38 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe 'self.search(search_name, search_id)について' do
+    let(:user1) { create(:user, name: 'test_name1', id: 1) }
+    let(:user2) { create(:user, name: 'test_name2', id: 2) }
+
+    context 'search_nameのみ代入されたとき' do
+      it 'nameの検索結果のみ返すこと' do
+        expect(User.search(user1.name, '')).to eq [user1]
+      end
+
+      it 'nameであいまい検索すること' do
+        users = [user1, user2]
+        expect(User.search('test', '').to_a).to eq users
+      end
+    end
+
+    context 'search_idのみ代入されたとき' do
+      it 'idの検索結果のみ返すこと' do
+        expect(User.search('', user1.id)).to eq [user1]
+      end
+
+      it '完全一致のidのみ返すこと' do
+        create(:user, name: 'test_name11', id: 11)
+        expect(User.search('', user1.id)).to eq [user1]
+      end
+    end
+
+    context 'search_nameとsearch_idが代入されたとき' do
+      it '両方の検索結果を表示すること' do
+        users = [user1, user2]
+        expect(User.search(user1.name, user2.id).to_a).to eq users
+      end
+    end
+  end
 end
