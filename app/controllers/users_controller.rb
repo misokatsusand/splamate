@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user,{only: [:log_out]}
-  before_action :authenticate_user,{only: [:log_out, :update]}
+  before_action :authenticate_user,{ only: [:log_out, :update] }
 
   def log_in
     if user = User.create_or_update_from_auth(request.env['omniauth.auth'])
